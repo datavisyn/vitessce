@@ -5,12 +5,12 @@ import { CoordinationLevel as CL } from '@vitessce/config';
 import {
   coordinateTransformationsToMatrixForSpatialData,
 } from '@vitessce/spatial-utils';
-import { GLSL_COLORMAP_DEFAULT, math } from '@vitessce/gl';
+import { Vector2 } from '@math.gl/core';
 import {
   OLD_SHAPES_DEFAULT_AXES,
   OLD_SHAPES_DEFAULT_COORDINATE_TRANSFORMATIONS,
 } from './old-defaults.js';
-
+const GLSL_COLORMAP_DEFAULT = 'plasma';
 function getGeometryPath(path) {
   return `${path}/geometry`;
 }
@@ -63,7 +63,7 @@ export default class SpatialDataObsSegmentationsLoader extends AbstractTwoStepLo
 
       // Apply transformation matrix to the coordinates
       const transformedCoords = polygons.map(polygon => polygon.map((coord) => {
-        const transformed = new math.Vector2(coord[0], coord[1])
+        const transformed = new Vector2(coord[0], coord[1])
           .transformAsPoint(modelMatrix);
         return [transformed[0], transformed[1]];
       }));

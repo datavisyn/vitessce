@@ -1,4 +1,4 @@
-import { viv } from '@vitessce/gl';
+import { getChannelStats } from '@vivjs/loaders';
 import { Matrix4 } from 'math.gl';
 
 // Returns an rgb string for display, and changes the color (arr)
@@ -31,7 +31,7 @@ async function getSingleSelectionStats2D({ loader, selection }) {
   const data = Array.isArray(loader) ? loader[loader.length - 1] : loader;
   const filteredSelection = filterSelection(loader, selection);
   const raster = await data.getRaster({ selection: filteredSelection });
-  const selectionStats = viv.getChannelStats(raster.data);
+  const selectionStats = getChannelStats(raster.data);
   const { domain, contrastLimits: slider } = selectionStats;
   return { domain, slider };
 }
@@ -50,9 +50,9 @@ async function getSingleSelectionStats3D({ loader, selection }) {
   const rasterTop = await lowResSource.getRaster({
     selection: { ...filteredSelection, z: Math.max(0, sizeZ - 1) },
   });
-  const stats0 = viv.getChannelStats(raster0.data);
-  const statsMid = viv.getChannelStats(rasterMid.data);
-  const statsTop = viv.getChannelStats(rasterTop.data);
+  const stats0 = getChannelStats(raster0.data);
+  const statsMid = getChannelStats(rasterMid.data);
+  const statsTop = getChannelStats(rasterTop.data);
   return {
     domain: [
       Math.min(stats0.domain[0], statsMid.domain[0], statsTop.domain[0]),

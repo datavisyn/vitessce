@@ -1,8 +1,8 @@
 import { CoordinationLevel as CL } from '@vitessce/config';
 import { LoaderResult } from '@vitessce/abstract';
-import { GLSL_COLORMAP_DEFAULT } from '@vitessce/gl';
-import OmeZarrLoader from './OmeZarrLoader.js';
 
+import OmeZarrLoader from './OmeZarrLoader.js';
+const GLSL_COLORMAP_DEFAULT = 'plasma';
 export default class OmeZarrAsObsSegmentationsLoader extends OmeZarrLoader {
   async load() {
     const { obsTypesFromChannelNames } = this.options || {};

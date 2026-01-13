@@ -6,7 +6,7 @@ import { CoordinationLevel as CL } from '@vitessce/config';
 import {
   coordinateTransformationsToMatrixForSpatialData,
 } from '@vitessce/spatial-utils';
-import { math } from '@vitessce/gl';
+import { Vector2 } from '@math.gl/core';
 import {
   OLD_SHAPES_DEFAULT_AXES,
   OLD_SHAPES_DEFAULT_COORDINATE_TRANSFORMATIONS,
@@ -86,7 +86,7 @@ export default class SpatialDataObsSpotsLoader extends AbstractTwoStepLoader {
       for (let i = 0; i < this.locations.shape[1]; i++) {
         const xCoord = this.locations.data[0][i];
         const yCoord = this.locations.data[1][i];
-        const transformed = new math.Vector2(xCoord, yCoord)
+        const transformed = new Vector2(xCoord, yCoord)
           .transformAsPoint(modelMatrix);
         // eslint-disable-next-line prefer-destructuring
         this.locations.data[0][i] = transformed[0];

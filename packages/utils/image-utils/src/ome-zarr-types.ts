@@ -1,4 +1,4 @@
-import type { ZarrPixelSource } from '@hms-dbmi/viv';
+import type { ZarrPixelSource } from '@vivjs/loaders';
 
 type Channel = {
   channelsVisible: boolean;
