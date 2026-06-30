@@ -1,6 +1,6 @@
 {
   "name": "@vitessce/constants",
-  "version": "3.8.8",
+  "version": "3.8.8-mh-zarronly.0",
   "author": "HIDIVE Lab at HMS",
   "homepage": "http://vitessce.io",
   "repository": {
@@ -28,11 +28,11 @@
   "scripts": {
     "bundle": "pnpm exec vite build -c ../../scripts/vite.config.mjs"
   },
-  "dependencies": {
-    "@vitessce/globals": "workspace:*",
-    "@vitessce/constants-internal": "workspace:*"
-  },
   "devDependencies": {
     "@vitessce/types": "workspace:*"
+  },
+  "peerDependencies": {
+    "@vitessce/globals": "3.8.8-mh-zarronly.0",
+    "@vitessce/constants-internal": "3.8.8-mh-zarronly.0"
   }
 }

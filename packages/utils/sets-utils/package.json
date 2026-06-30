@@ -1,6 +1,6 @@
 {
   "name": "@vitessce/sets-utils",
-  "version": "3.8.8",
+  "version": "3.8.8-mh-zarronly.0",
   "author": "HIDIVE Lab at HMS",
   "homepage": "http://vitessce.io",
   "repository": {
@@ -32,9 +32,6 @@
   "dependencies": {
     "@turf/centroid": "catalog:turf",
     "@turf/helpers": "catalog:turf",
-    "@vitessce/schemas": "workspace:*",
-    "@vitessce/utils": "workspace:*",
-    "@vitessce/globals": "workspace:*",
     "concaveman": "^1.2.1",
     "d3-dsv": "catalog:",
     "internmap": "catalog:",
@@ -42,5 +39,10 @@
     "lodash-es": "catalog:",
     "tinycolor2": "^1.4.1",
     "uuid": "catalog:"
+  },
+  "peerDependencies": {
+    "@vitessce/schemas": "3.8.8-mh-zarronly.0",
+    "@vitessce/utils": "3.8.8-mh-zarronly.0",
+    "@vitessce/globals": "3.8.8-mh-zarronly.0"
   }
 }

@@ -1,6 +1,6 @@
 {
   "name": "@vitessce/schemas",
-  "version": "3.8.8",
+  "version": "3.8.8-mh-zarronly.0",
   "author": "HIDIVE Lab at HMS",
   "homepage": "http://vitessce.io",
   "repository": {
@@ -33,11 +33,6 @@
     "@types/lodash-es": "catalog:",
     "@types/semver": "catalog:",
     "@types/uuid": "catalog:",
-    "@vitessce/constants": "workspace:*",
-    "@vitessce/constants-internal": "workspace:*",
-    "@vitessce/plugins": "workspace:*",
-    "@vitessce/utils": "workspace:*",
-    "@vitessce/globals": "workspace:*",
     "lodash-es": "catalog:",
     "semver": "catalog:",
     "uuid": "catalog:",
@@ -48,5 +43,12 @@
     "vite": "catalog:",
     "vitest": "catalog:",
     "zod-to-json-schema": "^3.20.4"
+  },
+  "peerDependencies": {
+    "@vitessce/constants": "3.8.8-mh-zarronly.0",
+    "@vitessce/constants-internal": "3.8.8-mh-zarronly.0",
+    "@vitessce/plugins": "3.8.8-mh-zarronly.0",
+    "@vitessce/utils": "3.8.8-mh-zarronly.0",
+    "@vitessce/globals": "3.8.8-mh-zarronly.0"
   }
 }

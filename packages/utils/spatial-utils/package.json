@@ -1,6 +1,6 @@
 {
   "name": "@vitessce/spatial-utils",
-  "version": "3.8.8",
+  "version": "3.8.8-mh-zarronly.0",
   "author": "HIDIVE Lab at HMS",
   "homepage": "http://vitessce.io",
   "repository": {
@@ -30,16 +30,16 @@
     "test": "pnpm exec vitest --run"
   },
   "peerDependencies": {
-    "zarrita": "catalog:"
+    "zarrita": "catalog:",
+    "@vitessce/utils": "3.8.8-mh-zarronly.0",
+    "@vitessce/zarr-utils": "3.8.8-mh-zarronly.0",
+    "@vitessce/constants-internal": "3.8.8-mh-zarronly.0",
+    "@vitessce/globals": "3.8.8-mh-zarronly.0",
+    "@vitessce/error": "3.8.8-mh-zarronly.0"
   },
   "dependencies": {
     "@vivjs/loaders": "^0.16.0",
     "quickselect": "^2.0.0",
-    "@vitessce/utils": "workspace:*",
-    "@vitessce/zarr-utils": "workspace:*",
-    "@vitessce/constants-internal": "workspace:*",
-    "@vitessce/globals": "workspace:*",
-    "@vitessce/error": "workspace:*",
     "lodash-es": "catalog:",
     "math.gl": "catalog:",
     "mathjs": "catalog:",
