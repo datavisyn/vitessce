@@ -1,4 +1,4 @@
-import type { TiffPixelSource } from '@hms-dbmi/viv';
+import type { TiffPixelSource } from '@vivjs/loaders';
 
 type DimensionOrder = 'XYZCT'
   | 'XYZTC'

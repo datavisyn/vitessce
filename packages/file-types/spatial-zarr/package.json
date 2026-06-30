@@ -26,24 +26,26 @@
     "dist-tsc"
   ],
   "scripts": {
-    "bundle": "pnpm exec vite build -c ../../../scripts/vite.config.mjs",
+    "bundle": "pnpm exec vite build -c ../../../scripts/vite.config2.mjs",
     "test": "pnpm exec vitest --run"
   },
   "dependencies": {
     "@vitessce/abstract": "workspace:*",
     "@vitessce/error": "workspace:*",
-    "@vitessce/gl": "workspace:*",
     "@vitessce/spatial-utils": "workspace:*",
     "@vitessce/image-utils": "workspace:*",
     "@vitessce/zarr": "workspace:*",
     "@vitessce/config": "workspace:*",
     "@vitessce/globals": "workspace:*",
+    "@math.gl/core": "catalog:",
     "d3-array": "catalog:",
     "lodash-es": "catalog:",
-    "zarrita": "catalog:",
     "apache-arrow": "catalog:",
     "parquet-wasm": "catalog:",
     "ol": "^10.2.1"
+  },
+  "peerDependencies": {
+    "zarrita": "catalog:"
   },
   "devDependencies": {
     "@vitessce/types": "workspace:*",

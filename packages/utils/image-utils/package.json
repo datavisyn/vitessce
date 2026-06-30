@@ -34,7 +34,8 @@
     "@vitessce/spatial-utils": "workspace:*",
     "@vitessce/utils": "workspace:*",
     "@vitessce/globals": "workspace:*",
-    "@hms-dbmi/viv": "catalog:"
+    "@vivjs/loaders": "^0.16.0",
+    "quickselect": "^2.0.0"
   },
   "devDependencies": {
     "vite": "catalog:",

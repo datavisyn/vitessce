@@ -1,4 +1,4 @@
-import { viv } from '@vitessce/gl';
+import { ZarrPixelSource } from '@vivjs/loaders';
 import { open as zarrOpen } from 'zarrita';
 import { createZarrArrayAdapter } from '@vitessce/zarr-utils';
 import { ZarrNodeNotFoundError } from '@vitessce/error';
@@ -68,7 +68,7 @@ async function loadMultiscales(root) {
   };
 }
 
-export class ZarritaPixelSource extends viv.ZarrPixelSource {
+export class ZarritaPixelSource extends ZarrPixelSource {
   constructor(arr, labels, tileSize) {
     super(arr, labels, tileSize);
     // We prevent reading chunks directly, since Zarrita does not

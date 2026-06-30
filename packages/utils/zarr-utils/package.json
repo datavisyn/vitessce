@@ -26,15 +26,15 @@
     "dist-tsc"
   ],
   "scripts": {
-    "bundle": "pnpm exec vite build -c ../../../scripts/vite.config.mjs",
+    "bundle": "pnpm exec vite build -c ../../../scripts/vite.config2.mjs",
     "test": "pnpm exec vitest --run"
   },
   "dependencies": {
-    "zarrita": "catalog:",
     "@zarrita/storage": "catalog:",
     "@vitessce/globals": "workspace:*"
   },
   "devDependencies": {
-    "unzipit": "^1.4.3"
+    "unzipit": "^1.4.3",
+    "zarrita": "catalog:"
   }
 }
