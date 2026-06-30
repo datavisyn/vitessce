@@ -1,6 +1,6 @@
 {
   "name": "@vitessce/abstract",
-  "version": "3.8.8",
+  "version": "3.8.8-mh-zarronly.0",
   "author": "HiDIVE Lab at HMS",
   "homepage": "http://vitessce.io",
   "repository": {
@@ -30,10 +30,10 @@
     "bundle": "pnpm exec vite build -c ../../../scripts/vite.config.mjs",
     "test": "pnpm exec vitest --run"
   },
-  "dependencies": {
-    "@vitessce/globals": "workspace:*"
-  },
   "devDependencies": {
     "@vitessce/types": "workspace:*"
+  },
+  "peerDependencies": {
+    "@vitessce/globals": "3.8.8-mh-zarronly.0"
   }
 }

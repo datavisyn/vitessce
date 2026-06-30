@@ -1,6 +1,6 @@
 {
   "name": "@vitessce/zarr",
-  "version": "3.8.8",
+  "version": "3.8.8-mh-zarronly.0",
   "author": "HIDIVE Lab at HMS",
   "homepage": "http://vitessce.io",
   "repository": {
@@ -30,15 +30,6 @@
     "test": "pnpm exec vitest --run"
   },
   "dependencies": {
-    "@vitessce/abstract": "workspace:*",
-    "@vitessce/error": "workspace:*",
-    "@vitessce/constants-internal": "workspace:*",
-    "@vitessce/sets-utils": "workspace:*",
-    "@vitessce/image-utils": "workspace:*",
-    "@vitessce/utils": "workspace:*",
-    "@vitessce/zarr-utils": "workspace:*",
-    "@vitessce/config": "workspace:*",
-    "@vitessce/globals": "workspace:*",
     "d3-array": "catalog:",
     "lodash-es": "catalog:",
     "apache-arrow": "catalog:",
@@ -46,7 +37,16 @@
     "ol": "^10.2.1"
   },
   "peerDependencies": {
-    "zarrita": "catalog:"
+    "zarrita": "catalog:",
+    "@vitessce/abstract": "3.8.8-mh-zarronly.0",
+    "@vitessce/error": "3.8.8-mh-zarronly.0",
+    "@vitessce/constants-internal": "3.8.8-mh-zarronly.0",
+    "@vitessce/sets-utils": "3.8.8-mh-zarronly.0",
+    "@vitessce/image-utils": "3.8.8-mh-zarronly.0",
+    "@vitessce/utils": "3.8.8-mh-zarronly.0",
+    "@vitessce/zarr-utils": "3.8.8-mh-zarronly.0",
+    "@vitessce/config": "3.8.8-mh-zarronly.0",
+    "@vitessce/globals": "3.8.8-mh-zarronly.0"
   },
   "devDependencies": {
     "@vitessce/types": "workspace:*"
