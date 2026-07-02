@@ -1,6 +1,7 @@
 import {
   initializeRasterLayersAndChannels,
   coordinateTransformationsToMatrix,
+  coordinateTransformationsToMatrixForSpatialData,
   getNgffAxes,
   hexToRgb,
   normalizeCoordinateTransformations,
@@ -60,15 +61,24 @@ export default class OmeZarrLoader extends AbstractTwoStepLoader {
     // Reference: https://github.com/ome/ngff/pull/138
 
     // This new spec is very flexible, so here we will attepmpt to convert it back to the old spec.
-    const normCoordinateTransformationsFromFile = normalizeCoordinateTransformations(
-      coordinateTransformationsFromFile, datasets,
-    );
+    const { coordinateSystem } = this.options || {};
+    let transformMatrixFromFile;
+    if (coordinateSystem && Array.isArray(coordinateTransformationsFromFile)) {
+      transformMatrixFromFile = coordinateTransformationsToMatrixForSpatialData(
+        { datasets, coordinateTransformations: coordinateTransformationsFromFile, axes },
+        coordinateSystem,
+      );
+    } else {
+      const normCoordinateTransformationsFromFile = normalizeCoordinateTransformations(
+        coordinateTransformationsFromFile, datasets,
+      );
+      transformMatrixFromFile = coordinateTransformationsToMatrix(
+        normCoordinateTransformationsFromFile, axes,
+      );
+    }
 
     const transformMatrixFromOptions = coordinateTransformationsToMatrix(
       coordinateTransformationsFromOptions, axes,
-    );
-    const transformMatrixFromFile = coordinateTransformationsToMatrix(
-      normCoordinateTransformationsFromFile, axes,
     );
 
     const transformMatrix = transformMatrixFromFile.multiplyLeft(transformMatrixFromOptions);

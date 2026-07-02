@@ -499,24 +499,52 @@ export function coordinateTransformationsToMatrix(coordinateTransformations, axe
             mat = mat.multiplyLeft(swapMat);
           }
         } else if (spatialOutputAxes.length === 2) { // 2D case
-          const nextMat = (new Matrix4()).fromArray([
-            filteredAffine[0][0], filteredAffine[0][1], 0, filteredAffine[0][2],
-            filteredAffine[1][0], filteredAffine[1][1], 0, filteredAffine[1][2],
-            0, 0, 1, 0,
-            0, 0, 0, 1,
-          ]);
-          mat = mat.multiplyLeft(nextMat);
+          // Build the column-major Matrix4 directly from the OME-NGFF affine,
+          // mapping output axes to world x/y and input axes to world x/y.
+          // The previous implementation filled a row-major 4x4 matrix, applied
+          // an axis swap on the wrong side, and then transposed the whole
+          // accumulated matrix, which turned valid affines into projective
+          // transforms whenever rotation or shear was present.
+          const inputAxisIndex = {};
+          inputAxisNames.forEach((name, i) => { inputAxisIndex[name] = i; });
+          const outputAxisIndex = {};
+          outputAxisNames.forEach((name, i) => { outputAxisIndex[name] = i; });
 
-          if (!isEqual(inputAxisNames, outputAxisNames)) {
-            // Handle 2D axis swapping.
-            const swapMatNested = getSwapAxesMatrix(inputAxisNames, outputAxisNames);
-            const swapMat = (new Matrix4()).fromArray(swapMatNested.flat());
-            mat = mat.multiplyLeft(swapMat);
+          const inIdxX = inputAxisIndex.x;
+          const inIdxY = inputAxisIndex.y;
+          const outIdxX = outputAxisIndex.x;
+          const outIdxY = outputAxisIndex.y;
+          if (
+            inIdxX === undefined
+            || inIdxY === undefined
+            || outIdxX === undefined
+            || outIdxY === undefined
+          ) {
+            throw new Error('2D affine transformation is missing x or y axis mapping.');
           }
-          // TODO: is the transpose needed? why?
-          // TODO: is transpose only needed when axis-swapping?
-          // TODO: is it also needed in the 3D case? Why was it not needed before?
-          mat = mat.transpose();
+
+          const affineX = filteredAffine[outIdxX];
+          const affineY = filteredAffine[outIdxY];
+          const colMajor = [
+            affineX[inIdxX] ?? 0,
+            affineY[inIdxX] ?? 0,
+            0,
+            0,
+            affineX[inIdxY] ?? 0,
+            affineY[inIdxY] ?? 0,
+            0,
+            0,
+            0,
+            0,
+            1,
+            0,
+            affineX[2] ?? 0,
+            affineY[2] ?? 0,
+            0,
+            1,
+          ];
+          const nextMat = (new Matrix4()).fromArray(colMajor);
+          mat = mat.multiplyLeft(nextMat);
         } else {
           throw new Error('Affine transformation must have 2 or 3 rows.');
         }
@@ -555,6 +583,18 @@ export function coordinateTransformationsToMatrix(coordinateTransformations, axe
         mat = mat.multiplyLeft(nextMat);
 
         // TODO: error if the user tries to use a scale on the "c" axis.
+      }
+      if (transform.type === 'mapAxis') {
+        const { input, output } = transform;
+        const spatialInputAxes = input.axes.filter(axis => axis.type === 'space');
+        const spatialOutputAxes = output.axes.filter(axis => axis.type === 'space');
+        const transformInputAxisNames = spatialInputAxes.map(axis => axis.name);
+        const transformOutputAxisNames = spatialOutputAxes.map(axis => axis.name);
+        if (!isEqual(transformInputAxisNames, transformOutputAxisNames)) {
+          const swapMatNested = getSwapAxesMatrix(transformInputAxisNames, transformOutputAxisNames);
+          const swapMat = (new Matrix4()).fromArray(swapMatNested.flat());
+          mat = mat.multiplyLeft(swapMat);
+        }
       }
     });
   }
@@ -612,26 +652,32 @@ export function normalizeCoordinateTransformations(coordinateTransformations, da
   let result = [];
 
   if (Array.isArray(coordinateTransformations)) {
-    result = coordinateTransformations.flatMap((transform) => {
-      if (transform.input && transform.output) {
-        // This is a new-style coordinate transformation.
-        // (As proposed in https://github.com/ome/ngff/pull/138)
-        const { type } = transform;
-        if (type === 'sequence') {
-          // Recursion to flatten the sequence of transformations.
-          return normalizeCoordinateTransformations(transform.transformations, null);
-        } if (type === 'affine' || type === 'translation' || type === 'scale' || type === 'identity') {
-          // TODO: normalize the transform.input/transform.output if they are missing?
-          // Old transformations did not specify them for translation/scale/identity.
-          // But we are currently only using them for affine.
-          return transform;
+    const hasSequence = coordinateTransformations.some((transform) => transform.type === 'sequence');
+    if (hasSequence) {
+      const sequenceTransforms = coordinateTransformations.filter((transform) => transform.type === 'sequence');
+      result = sequenceTransforms.flatMap((transform) => normalizeCoordinateTransformations(transform.transformations, null));
+    } else {
+      result = coordinateTransformations.flatMap((transform) => {
+        if (transform.input && transform.output) {
+          // This is a new-style coordinate transformation.
+          // (As proposed in https://github.com/ome/ngff/pull/138)
+          const { type } = transform;
+          if (type === 'sequence') {
+            // Recursion to flatten the sequence of transformations.
+            return normalizeCoordinateTransformations(transform.transformations, null);
+          } if (type === 'affine' || type === 'translation' || type === 'scale' || type === 'identity') {
+            // TODO: normalize the transform.input/transform.output if they are missing?
+            // Old transformations did not specify them for translation/scale/identity.
+            // But we are currently only using them for affine.
+            return transform;
+          }
+          // If the type is not recognized, log an error.
+          log.error(`Coordinate transformation type "${type}" is not supported.`);
         }
-        // If the type is not recognized, log an error.
-        log.error(`Coordinate transformation type "${type}" is not supported.`);
-      }
-      // Assume it was already an old-style (NGFF v0.4) coordinate transformation.
-      return transform;
-    });
+        // Assume it was already an old-style (NGFF v0.4) coordinate transformation.
+        return transform;
+      });
+    }
   }
 
   if (Array.isArray(datasets?.[0]?.coordinateTransformations)) {
