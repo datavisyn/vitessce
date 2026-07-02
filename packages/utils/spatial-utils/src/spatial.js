@@ -499,24 +499,52 @@ export function coordinateTransformationsToMatrix(coordinateTransformations, axe
             mat = mat.multiplyLeft(swapMat);
           }
         } else if (spatialOutputAxes.length === 2) { // 2D case
-          const nextMat = (new Matrix4()).fromArray([
-            filteredAffine[0][0], filteredAffine[0][1], 0, filteredAffine[0][2],
-            filteredAffine[1][0], filteredAffine[1][1], 0, filteredAffine[1][2],
-            0, 0, 1, 0,
-            0, 0, 0, 1,
-          ]);
-          mat = mat.multiplyLeft(nextMat);
+          // Build the column-major Matrix4 directly from the OME-NGFF affine,
+          // mapping output axes to world x/y and input axes to world x/y.
+          // The previous implementation filled a row-major 4x4 matrix, applied
+          // an axis swap on the wrong side, and then transposed the whole
+          // accumulated matrix, which turned valid affines into projective
+          // transforms whenever rotation or shear was present.
+          const inputAxisIndex = {};
+          inputAxisNames.forEach((name, i) => { inputAxisIndex[name] = i; });
+          const outputAxisIndex = {};
+          outputAxisNames.forEach((name, i) => { outputAxisIndex[name] = i; });
 
-          if (!isEqual(inputAxisNames, outputAxisNames)) {
-            // Handle 2D axis swapping.
-            const swapMatNested = getSwapAxesMatrix(inputAxisNames, outputAxisNames);
-            const swapMat = (new Matrix4()).fromArray(swapMatNested.flat());
-            mat = mat.multiplyLeft(swapMat);
+          const inIdxX = inputAxisIndex.x;
+          const inIdxY = inputAxisIndex.y;
+          const outIdxX = outputAxisIndex.x;
+          const outIdxY = outputAxisIndex.y;
+          if (
+            inIdxX === undefined
+            || inIdxY === undefined
+            || outIdxX === undefined
+            || outIdxY === undefined
+          ) {
+            throw new Error('2D affine transformation is missing x or y axis mapping.');
           }
-          // TODO: is the transpose needed? why?
-          // TODO: is transpose only needed when axis-swapping?
-          // TODO: is it also needed in the 3D case? Why was it not needed before?
-          mat = mat.transpose();
+
+          const affineX = filteredAffine[outIdxX];
+          const affineY = filteredAffine[outIdxY];
+          const colMajor = [
+            affineX[inIdxX] ?? 0,
+            affineY[inIdxX] ?? 0,
+            0,
+            0,
+            affineX[inIdxY] ?? 0,
+            affineY[inIdxY] ?? 0,
+            0,
+            0,
+            0,
+            0,
+            1,
+            0,
+            affineX[2] ?? 0,
+            affineY[2] ?? 0,
+            0,
+            1,
+          ];
+          const nextMat = (new Matrix4()).fromArray(colMajor);
+          mat = mat.multiplyLeft(nextMat);
         } else {
           throw new Error('Affine transformation must have 2 or 3 rows.');
         }
