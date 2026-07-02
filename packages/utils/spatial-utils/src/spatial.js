@@ -652,26 +652,32 @@ export function normalizeCoordinateTransformations(coordinateTransformations, da
   let result = [];
 
   if (Array.isArray(coordinateTransformations)) {
-    result = coordinateTransformations.flatMap((transform) => {
-      if (transform.input && transform.output) {
-        // This is a new-style coordinate transformation.
-        // (As proposed in https://github.com/ome/ngff/pull/138)
-        const { type } = transform;
-        if (type === 'sequence') {
-          // Recursion to flatten the sequence of transformations.
-          return normalizeCoordinateTransformations(transform.transformations, null);
-        } if (type === 'affine' || type === 'translation' || type === 'scale' || type === 'identity') {
-          // TODO: normalize the transform.input/transform.output if they are missing?
-          // Old transformations did not specify them for translation/scale/identity.
-          // But we are currently only using them for affine.
-          return transform;
+    const hasSequence = coordinateTransformations.some((transform) => transform.type === 'sequence');
+    if (hasSequence) {
+      const sequenceTransforms = coordinateTransformations.filter((transform) => transform.type === 'sequence');
+      result = sequenceTransforms.flatMap((transform) => normalizeCoordinateTransformations(transform.transformations, null));
+    } else {
+      result = coordinateTransformations.flatMap((transform) => {
+        if (transform.input && transform.output) {
+          // This is a new-style coordinate transformation.
+          // (As proposed in https://github.com/ome/ngff/pull/138)
+          const { type } = transform;
+          if (type === 'sequence') {
+            // Recursion to flatten the sequence of transformations.
+            return normalizeCoordinateTransformations(transform.transformations, null);
+          } if (type === 'affine' || type === 'translation' || type === 'scale' || type === 'identity') {
+            // TODO: normalize the transform.input/transform.output if they are missing?
+            // Old transformations did not specify them for translation/scale/identity.
+            // But we are currently only using them for affine.
+            return transform;
+          }
+          // If the type is not recognized, log an error.
+          log.error(`Coordinate transformation type "${type}" is not supported.`);
         }
-        // If the type is not recognized, log an error.
-        log.error(`Coordinate transformation type "${type}" is not supported.`);
-      }
-      // Assume it was already an old-style (NGFF v0.4) coordinate transformation.
-      return transform;
-    });
+        // Assume it was already an old-style (NGFF v0.4) coordinate transformation.
+        return transform;
+      });
+    }
   }
 
   if (Array.isArray(datasets?.[0]?.coordinateTransformations)) {
