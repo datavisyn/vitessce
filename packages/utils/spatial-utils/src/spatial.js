@@ -584,6 +584,18 @@ export function coordinateTransformationsToMatrix(coordinateTransformations, axe
 
         // TODO: error if the user tries to use a scale on the "c" axis.
       }
+      if (transform.type === 'mapAxis') {
+        const { input, output } = transform;
+        const spatialInputAxes = input.axes.filter(axis => axis.type === 'space');
+        const spatialOutputAxes = output.axes.filter(axis => axis.type === 'space');
+        const transformInputAxisNames = spatialInputAxes.map(axis => axis.name);
+        const transformOutputAxisNames = spatialOutputAxes.map(axis => axis.name);
+        if (!isEqual(transformInputAxisNames, transformOutputAxisNames)) {
+          const swapMatNested = getSwapAxesMatrix(transformInputAxisNames, transformOutputAxisNames);
+          const swapMat = (new Matrix4()).fromArray(swapMatNested.flat());
+          mat = mat.multiplyLeft(swapMat);
+        }
+      }
     });
   }
   if (mat.some(value => Number.isNaN(value))) {
